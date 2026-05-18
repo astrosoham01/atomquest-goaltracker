@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GoalTracker Architecture Diagram</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a14; color: #f0f0f5; font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px; }
+  .diagram { width: 1200px; position: relative; }
+  .diagram-title { text-align: center; margin-bottom: 40px; }
+  .diagram-title h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.03em; background: linear-gradient(135deg, #6366f1, #a855f7, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .diagram-title p { color: #6b7280; font-size: 13px; margin-top: 6px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .layer { margin-bottom: 24px; position: relative; }
+  .layer-label { position: absolute; left: -12px; top: 50%; transform: translateY(-50%) rotate(-90deg); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: #4b5563; white-space: nowrap; }
+  .layer-content { margin-left: 30px; }
+
+  .row { display: flex; gap: 16px; justify-content: center; }
+  .box { border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.06); position: relative; overflow: hidden; flex: 1; }
+  .box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .box h3 { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .box .items { display: flex; flex-wrap: wrap; gap: 6px; }
+  .box .item { font-size: 11px; padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,0.04); color: #9ca3af; font-weight: 500; }
+
+  /* Colors */
+  .green { background: rgba(16,185,129,0.06); border-color: rgba(16,185,129,0.2); }
+  .green::before { background: linear-gradient(90deg, #10b981, #34d399); }
+  .green h3 { color: #10b981; }
+  .green .item { border: 1px solid rgba(16,185,129,0.15); }
+
+  .cyan { background: rgba(6,182,212,0.06); border-color: rgba(6,182,212,0.2); }
+  .cyan::before { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+  .cyan h3 { color: #06b6d4; }
+  .cyan .item { border: 1px solid rgba(6,182,212,0.15); }
+
+  .purple { background: rgba(99,102,241,0.06); border-color: rgba(99,102,241,0.2); }
+  .purple::before { background: linear-gradient(90deg, #6366f1, #a855f7); }
+  .purple h3 { color: #6366f1; }
+  .purple .item { border: 1px solid rgba(99,102,241,0.15); }
+
+  .amber { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.2); }
+  .amber::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+  .amber h3 { color: #f59e0b; }
+  .amber .item { border: 1px solid rgba(245,158,11,0.15); }
+
+  .rose { background: rgba(244,63,94,0.06); border-color: rgba(244,63,94,0.2); }
+  .rose::before { background: linear-gradient(90deg, #f43f5e, #fb7185); }
+  .rose h3 { color: #f43f5e; }
+  .rose .item { border: 1px solid rgba(244,63,94,0.15); }
+
+  .dark { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.08); }
+  .dark::before { background: linear-gradient(90deg, #374151, #4b5563); }
+  .dark h3 { color: #9ca3af; }
+
+  /* Arrows */
+  .arrow-row { display: flex; justify-content: center; margin: 8px 0; margin-left: 30px; }
+  .arrow { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .arrow-line { width: 2px; height: 20px; background: linear-gradient(to bottom, rgba(99,102,241,0.5), rgba(99,102,241,0.2)); }
+  .arrow-head { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid rgba(99,102,241,0.5); }
+  .arrow-label { font-size: 10px; color: #6366f1; font-weight: 600; letter-spacing: 0.05em; margin-top: 2px; }
+
+  .section-label { text-align: center; margin: 4px 0 12px; margin-left: 30px; }
+  .section-label span { font-size: 11px; font-weight: 600; color: #4b5563; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 16px; border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; background: rgba(255,255,255,0.02); }
+
+  /* Tech badges */
+  .tech-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; padding: 3px 8px; border-radius: 4px; background: rgba(99,102,241,0.1); color: #818cf8; font-weight: 600; border: 1px solid rgba(99,102,241,0.2); }
+
+  /* Bottom info */
+  .bottom-row { display: flex; gap: 16px; margin-left: 30px; margin-top: 24px; }
+  .info-card { flex: 1; padding: 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); }
+  .info-card h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #6b7280; margin-bottom: 10px; }
+  .info-card .info-items { display: flex; flex-direction: column; gap: 6px; }
+  .info-card .info-item { font-size: 12px; color: #9ca3af; display: flex; align-items: center; gap: 6px; }
+  .info-card .info-item .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  .formula-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .formula-table th { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #6b7280; text-align: left; padding: 4px 8px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .formula-table td { font-size: 11px; color: #9ca3af; padding: 4px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .formula-table td:first-child { color: #d1d5db; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="diagram">
+  <div class="diagram-title">
+    <h1>🎯 GoalTracker — System Architecture</h1>
+    <p>AtomQuest Hackathon 1.0 • In-House Goal Setting & Tracking Portal</p>
+  </div>
+
+  <!-- Client Layer -->
+  <div class="section-label"><span>👤 Client Layer — Browser (React)</span></div>
+  <div class="layer">
+    <div class="layer-content">
+      <div class="row">
+        <div class="box green">
+          <h3>👤 Employee Portal</h3>
+          <div class="items">
+            <span class="item">📊 Dashboard</span>
+            <span class="item">🎯 My Goals</span>
+            <span class="item">➕ Create Goal</span>
+            <span class="item">📝 Check-ins</span>
+          </div>
+        </div>
+        <div class="box cyan">
+          <h3>👥 Manager Portal</h3>
+          <div class="items">
+            <span class="item">📊 Team Dashboard</span>
+            <span class="item">✅ Approvals</span>
+            <span class="item">📋 Team Check-ins</span>
+            <span class="item">🔗 Shared Goals</span>
+          </div>
+        </div>
+        <div class="box purple">
+          <h3>🛡️ Admin / HR Portal</h3>
+          <div class="items">
+            <span class="item">📊 Dashboard</span>
+            <span class="item">🔄 Cycles</span>
+            <span class="item">👥 Users</span>
+            <span class="item">📈 Reports</span>
+            <span class="item">🔍 Audit Trail</span>
+            <span class="item">📉 Analytics</span>
+            <span class="item">🔓 Goal Unlock</span>
+            <span class="item">⚠️ Escalations</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrow -->
+  <div class="arrow-row">
+    <div class="arrow">
+      <div class="arrow-line"></div>
+      <div class="arrow-head"></div>
+      <div class="arrow-label">HTTPS / REST API</div>
+    </div>
+  </div>
+
+  <!-- Auth Layer -->
+  <div class="section-label"><span>🔐 Authentication & Routing Layer</span></div>
+  <div class="layer">
+    <div class="layer-content">
+      <div class="row">
+        <div class="box amber" style="flex: 0.4;">
+          <h3>🔐 NextAuth.js</h3>
+          <div class="items">
+            <span class="item">JWT Sessions</span>
+            <span class="item">Credentials Provider</span>
+            <span class="item">Role-Based Access</span>
+            <span class="item">bcrypt Hashing</span>
+          </div>
+        </div>
+        <div class="box dark" style="flex: 1;">
+          <h3>🛣️ Next.js 16 App Router — API Routes</h3>
+          <div class="items">
+            <span class="item">/api/goals</span>
+            <span class="item">/api/goals/submit</span>
+            <span class="item">/api/goals/approve</span>
+            <span class="item">/api/goals/shared</span>
+            <span class="item">/api/goals/unlock</span>
+            <span class="item">/api/achievements</span>
+            <span class="item">/api/checkins</span>
+            <span class="item">/api/cycles</span>
+            <span class="item">/api/users</span>
+            <span class="item">/api/reports</span>
+            <span class="item">/api/audit</span>
+            <span class="item">/api/notifications</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrow -->
+  <div class="arrow-row">
+    <div class="arrow">
+      <div class="arrow-line"></div>
+      <div class="arrow-head"></div>
+      <div class="arrow-label">Business Logic</div>
+    </div>
+  </div>
+
+  <!-- Business Logic -->
+  <div class="section-label"><span>⚙️ Business Logic Layer</span></div>
+  <div class="layer">
+    <div class="layer-content">
+      <div class="row">
+        <div class="box rose">
+          <h3>✅ Validation Engine</h3>
+          <div class="items">
+            <span class="item">Weightage = 100%</span>
+            <span class="item">Max 8 Goals</span>
+            <span class="item">Min 10% per Goal</span>
+            <span class="item">Role Permissions</span>
+          </div>
+        </div>
+        <div class="box green">
+          <h3>📐 Score Computation</h3>
+          <div class="items">
+            <span class="item">Min: Actual ÷ Target</span>
+            <span class="item">Max: Target ÷ Actual</span>
+            <span class="item">Timeline: Date Compare</span>
+            <span class="item">Zero: 0=100% else 0%</span>
+          </div>
+        </div>
+        <div class="box cyan">
+          <h3>🔔 Event System</h3>
+          <div class="items">
+            <span class="item">Audit Trail Logger</span>
+            <span class="item">In-App Notifications</span>
+            <span class="item">Shared Goal Sync</span>
+            <span class="item">Escalation Engine</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrow -->
+  <div class="arrow-row">
+    <div class="arrow">
+      <div class="arrow-line"></div>
+      <div class="arrow-head"></div>
+      <div class="arrow-label">SQL Queries (better-sqlite3)</div>
+    </div>
+  </div>
+
+  <!-- Data Layer -->
+  <div class="section-label"><span>💾 Data Layer — SQLite Database</span></div>
+  <div class="layer">
+    <div class="layer-content">
+      <div class="row">
+        <div class="box dark" style="flex: 1;">
+          <h3>🗄️ SQLite Database (better-sqlite3 • WAL Mode)</h3>
+          <div class="items">
+            <span class="item" style="border-color: rgba(16,185,129,0.3); color: #10b981;">👤 users</span>
+            <span class="item" style="border-color: rgba(99,102,241,0.3); color: #818cf8;">🎯 goals</span>
+            <span class="item" style="border-color: rgba(6,182,212,0.3); color: #06b6d4;">📊 goal_achievements</span>
+            <span class="item" style="border-color: rgba(245,158,11,0.3); color: #f59e0b;">📋 checkins</span>
+            <span class="item" style="border-color: rgba(168,85,247,0.3); color: #a855f7;">🔄 cycles</span>
+            <span class="item" style="border-color: rgba(244,63,94,0.3); color: #fb7185;">🏷️ thrust_areas</span>
+            <span class="item" style="border-color: rgba(107,114,128,0.3); color: #9ca3af;">🔍 audit_logs</span>
+            <span class="item" style="border-color: rgba(34,211,238,0.3); color: #22d3ee;">🔔 notifications</span>
+            <span class="item" style="border-color: rgba(251,191,36,0.3); color: #fbbf24;">⚠️ escalations</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Info -->
+  <div class="bottom-row">
+    <div class="info-card">
+      <h4>🛠 Tech Stack</h4>
+      <div class="info-items">
+        <div class="info-item"><div class="dot" style="background:#10b981;"></div>Next.js 16 (App Router, TypeScript)</div>
+        <div class="info-item"><div class="dot" style="background:#06b6d4;"></div>SQLite via better-sqlite3</div>
+        <div class="info-item"><div class="dot" style="background:#f59e0b;"></div>NextAuth.js 4 (JWT + Credentials)</div>
+        <div class="info-item"><div class="dot" style="background:#6366f1;"></div>React 19 + Vanilla CSS</div>
+        <div class="info-item"><div class="dot" style="background:#a855f7;"></div>Inter (Google Fonts)</div>
+      </div>
+    </div>
+    <div class="info-card">
+      <h4>🔑 Key Design Decisions</h4>
+      <div class="info-items">
+        <div class="info-item"><div class="dot" style="background:#10b981;"></div>$0 infrastructure cost (SQLite + Vercel Free)</div>
+        <div class="info-item"><div class="dot" style="background:#06b6d4;"></div>Single deployable — server + DB in one unit</div>
+        <div class="info-item"><div class="dot" style="background:#f59e0b;"></div>Auto-seeding — demo-ready on first login</div>
+        <div class="info-item"><div class="dot" style="background:#6366f1;"></div>WAL mode for concurrent read performance</div>
+        <div class="info-item"><div class="dot" style="background:#f43f5e;"></div>Full audit trail on every mutation</div>
+      </div>
+    </div>
+    <div class="info-card">
+      <h4>📐 Score Formulas</h4>
+      <table class="formula-table">
+        <thead><tr><th>UoM</th><th>Formula</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Min ↑</td><td>Actual ÷ Target</td><td>Revenue</td></tr>
+          <tr><td>Max ↓</td><td>Target ÷ Actual</td><td>TAT, Cost</td></tr>
+          <tr><td>Timeline</td><td>Deadline vs Done</td><td>Projects</td></tr>
+          <tr><td>Zero</td><td>0→100%, else 0%</td><td>Safety</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
