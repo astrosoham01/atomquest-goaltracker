@@ -1,12 +1,20 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 type ThrustArea = { id: string; name: string; };
 
-export default function CreateGoal() {
+export default function CreateGoalPage() {
+  return (
+    <Suspense fallback={<div className="loading"><div className="spinner" /></div>}>
+      <CreateGoal />
+    </Suspense>
+  );
+}
+
+function CreateGoal() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
